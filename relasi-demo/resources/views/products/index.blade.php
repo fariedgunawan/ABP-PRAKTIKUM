@@ -9,15 +9,15 @@
 <body>
 
 <div class="container mt-4">
-    <h2>Product List</h2>
+    <h2>Product Management (AJAX)</h2>
     <button class="btn btn-success mb-3" id="createNewProduct">Add Product</button>
     
     <table class="table table-bordered data-table">
         <thead>
             <tr>
                 <th>No</th>
-                <th>Name</th>
                 <th>Category</th>
+                <th>Name</th>
                 <th>Price</th>
                 <th>Action</th>
             </tr>
@@ -32,7 +32,7 @@
     <div class="modal-content">
       <form id="productForm">
         <div class="modal-header">
-            <h4 class="modal-title">Add/Edit Product</h4>
+            <h4 class="modal-title" id="modalHeading">Add/Edit Product</h4>
         </div>
         <div class="modal-body">
             <input type="hidden" name="product_id" id="product_id">
@@ -78,9 +78,9 @@ $(function () {
         serverSide: true,
         ajax: "{{ route('products.getProducts') }}",
         columns: [
-            { data: 'id', name: 'id' },
-            { data: 'name', name: 'name' },
+            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
             { data: 'category.name', name: 'category.name' },
+            { data: 'name', name: 'name' },
             { data: 'price', name: 'price' },
             { data: 'action', name: 'action', orderable: false, searchable: false },
         ]
@@ -89,6 +89,7 @@ $(function () {
     $('#createNewProduct').click(function () {
         $('#productForm').trigger("reset");
         $('#product_id').val('');
+        $('#modalHeading').text('Create New Product');
         $('#productModal').modal('show');
     });
 
@@ -99,15 +100,20 @@ $(function () {
             url: "{{ route('products.store') }}",
             type: "POST",
             success: function () {
+                $('#productForm').trigger("reset");
                 $('#productModal').modal('hide');
                 table.draw();
+            },
+            error: function (xhr) {
+                console.log('Error:', xhr.responseJSON);
             }
         });
     });
 
     $('body').on('click', '.editProduct', function () {
         let id = $(this).data('id');
-        $.get("products/" + id, function (data) {
+        $.get("{{ url('products') }}/" + id + "/edit", function (data) {
+            $('#modalHeading').text('Edit Product');
             $('#product_id').val(data.id);
             $('#name').val(data.name);
             $('#price').val(data.price);
@@ -118,15 +124,15 @@ $(function () {
 
     $('body').on('click', '.deleteProduct', function () {
         let id = $(this).data("id");
-        if (confirm("Are You sure want to delete !")) {
+        if (confirm("Are you sure you want to delete this product?")) {
             $.ajax({
                 type: "DELETE",
-                url: "products/" + id,
-                data: {
-                    _token: '{{ csrf_token() }}'
-                },
+                url: "{{ url('products') }}/" + id,
                 success: function () {
                     table.draw();
+                },
+                error: function (xhr) {
+                    console.log('Delete Error:', xhr.responseJSON);
                 }
             });
         }

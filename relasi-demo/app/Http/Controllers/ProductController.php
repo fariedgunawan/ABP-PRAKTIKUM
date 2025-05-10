@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class ProductController extends Controller
 {
@@ -31,14 +32,16 @@ class ProductController extends Controller
     public function getProducts()
     {
         $products = Product::with('category')->get();
-        return datatables()->of($products)
-            ->addColumn('action', function($row){
-                $btn = '<a href="javascript:void(0)" data-id="'.$row->id.'" class="edit btn btn-primary btn-sm editProduct">Edit</a> ';
-                $btn .= '<a href="javascript:void(0)" data-id="'.$row->id.'" class="btn btn-danger btn-sm deleteProduct">Delete</a>';
-                return $btn;
-            })
-            ->rawColumns(['action'])
-            ->make(true);
+        return DataTables::of($products)
+        ->addIndexColumn() 
+        ->addColumn('action', function($row){
+            $btn = '<a href="javascript:void(0)" data-id="'.$row->id.'" class="edit btn btn-primary btn-sm editProduct">Edit</a>';
+            $btn .= ' <a href="javascript:void(0)" data-id="'.$row->id.'" class="btn btn-danger btn-sm deleteProduct">Delete</a>';
+            return $btn;
+        })
+        ->rawColumns(['action'])
+        ->make(true);
+    
     }
 
     public function destroy($id)
@@ -47,9 +50,15 @@ class ProductController extends Controller
         return response()->json(['success' => 'Product deleted successfully.']);
     }
 
-    public function show($id)
+    public function edit($id)
     {
-        return Product::find($id);
-    }
-}
+        $product = Product::find($id);
 
+        if (!$product) {
+            return response()->json(['message' => 'Product not found'], 404);
+        }
+
+        return response()->json($product);
+    }
+
+}

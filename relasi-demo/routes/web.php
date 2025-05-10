@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,17 +13,14 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-use App\Http\Controllers\ProductController;
-use App\Models\Category;
-
-Route::get('/api/categories', function () {
-    return Category::with('products')->get();
-});
-
-Route::resource('products', ProductController::class);
-
-Route::get('get-products', [ProductController::class, 'getProducts'])->name('products.getProducts');
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/api/categories', function() {
+    return \App\Models\Category::with('products')->get();
+});
+
+Route::get('get-products', [ProductController::class, 'getProducts'])->name('products.getProducts');
+Route::resource('products', ProductController::class);
