@@ -3,8 +3,9 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\CostumerController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,14 +17,6 @@ use App\Http\Controllers\TransactionController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-// Definisikan resource route untuk produk
-Route::resource('products', ProductController::class);
-
-// Definisikan resource route untuk pelanggan
-Route::resource('customers', CustomerController::class);
-
-// Definisikan resource route untuk transaksi
-Route::resource('transactions', TransactionController::class);
 
 Route::get('/', function () {
     return view('welcome');
@@ -38,5 +31,17 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+// Definisikan resource route untuk produk
+Route::resource('products', ProductController::class);
+
+// Definisikan resource route untuk pelanggan
+Route::resource('customers', CostumerController::class);
+
+// Definisikan resource route untuk transaksi
+Route::resource('transactions', TransactionController::class);
+
+Route::resource('categories', CategoryController::class);
+
 
 require __DIR__.'/auth.php';
