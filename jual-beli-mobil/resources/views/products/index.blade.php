@@ -6,7 +6,7 @@
 
     <!-- Tombol untuk menambahkan produk baru -->
     <a href="{{ route('products.create') }}"
-       class="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded mb-6">
+       class="inline-block bg-green-600 hover:bg-green-700 px-4 py-2 rounded mb-6">
         + Tambah Produk Baru
     </a>
 
